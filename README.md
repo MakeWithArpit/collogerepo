@@ -1,6 +1,6 @@
 # Machine Learning — Concepts and Projects
 
-This repository contains Python-based Machine Learning implementations covering core concepts and practical projects. All code is written using scikit-learn, pandas, and matplotlib.
+This repository contains Python-based Machine Learning implementations covering core preprocessing techniques, model evaluation methods, and practical end-to-end projects. All code is written using scikit-learn, pandas, and matplotlib.
 
 ---
 
@@ -25,55 +25,95 @@ MechineLearning/
 
 ---
 
-## Concepts Overview
+## Files Overview
 
-### 1. K-Means Clustering
+### 1. K-Means Clustering (`K-MeansClustering.py`)
 
-An unsupervised learning algorithm that groups unlabeled data into a specified number of clusters based on feature similarity. The model assigns each data point to the nearest cluster centroid and iteratively updates centroids until convergence.
+Demonstrates the K-Means unsupervised clustering algorithm. A list of 8 numerical data points is grouped into 2 clusters using `KMeans(n_clusters=2)`. The model assigns a cluster label (0 or 1) to each data point based on proximity to the nearest centroid.
 
-**Refer to:** `K-MeansClustering.py`
+**Key concepts:** Unsupervised learning, centroids, cluster labels, inertia.
 
----
-
-### 2. K-Fold Cross-Validation
-
-A model evaluation technique that splits the dataset into K equal folds. The model is trained K times, each time using a different fold as the test set and the remaining folds as the training set. This provides a more reliable estimate of model performance than a single train-test split.
-
-**Refer to:** `KFold.py`
+```python
+model = KMeans(n_clusters=2)
+model.fit(a)
+print(model.labels_)
+```
 
 ---
 
-### 3. Logistic Regression
+### 2. K-Fold Cross-Validation (`KFold.py`)
 
-A supervised classification algorithm used to predict binary outcomes. Despite its name, it is a classification model that outputs probabilities using the sigmoid function and maps them to discrete class labels.
+Demonstrates how K-Fold cross-validation splits a dataset into multiple training and testing subsets. Using 5 folds on a 5-element dataset, each data point takes a turn as the test set while the remaining 4 form the training set. This gives a more reliable performance estimate than a single train-test split.
 
-**Refer to:** `LogisticRegression.py`
+**Key concepts:** Fold splitting, train-test indices, evaluation reliability.
 
----
-
-### 4. One-Hot Encoding
-
-A preprocessing technique for converting categorical text features into a numerical binary matrix. Each unique category becomes a separate column with a value of 0 or 1, making it compatible with ML algorithms that require numeric input.
-
-**Refer to:** `OneHotEncoding.py`
-
----
-
-## Projects Overview
-
-### House Price Prediction
-
-A regression project that predicts house prices using the King County, Washington real estate dataset. The pipeline includes data cleaning, feature engineering, categorical encoding, standard scaling, and Linear Regression modeling. Model performance is evaluated using R2 score and Mean Squared Error.
-
-**Refer to:** `Projects/HousePricePrediction/README.md`
+```python
+kf = KFold(n_splits=5)
+for train, test in kf.split(data):
+    print("Train:", [data[i] for i in train])
+    print("Test:", [data[i] for i in test])
+```
 
 ---
 
-### Student Marks Prediction
+### 3. Logistic Regression (`LogisticRegression.py`)
 
-A simple regression project that models the relationship between study hours and exam marks. It demonstrates the core workflow of building and visualizing a Linear Regression model on a small custom dataset.
+Implements binary classification using Logistic Regression. A small dataset with 4 labeled samples is used to train a classifier that predicts the class (0 or 1) of a new input value. Despite the name, Logistic Regression is a classification model — not regression.
 
-**Refer to:** `Projects/StudentMarksPrediction/README.md`
+**Key concepts:** Binary classification, sigmoid function, decision boundary.
+
+```python
+model = LogisticRegression()
+model.fit(X, Y)
+print(model.predict([[40]]))
+```
+
+---
+
+### 4. One-Hot Encoding (`OneHotEncoding.py`)
+
+Demonstrates how to convert categorical text data (city names) into a numerical binary matrix using `OneHotEncoder`. Each unique category gets its own column with a value of 1 or 0. This avoids the false ordinal ranking that simple integer encoding would imply.
+
+**Key concepts:** Categorical encoding, sparse matrix, dummy variables.
+
+```python
+encoder = OneHotEncoder()
+result = encoder.fit_transform(city)
+print(result.toarray())
+```
+
+---
+
+### 5. House Price Prediction (`Projects/HousePricePrediction/`)
+
+An end-to-end regression project using the King County, WA housing dataset. The pipeline covers data cleaning, date feature extraction, outlier removal, one-hot encoding of categorical columns (`city`, `statezip`), standard scaling, and Linear Regression modeling. Performance is evaluated using R2 score and Mean Squared Error. A scatter plot of actual vs predicted prices is generated at the end.
+
+**Key concepts:** Full ML pipeline, feature engineering, StandardScaler, data leakage prevention, R2 score, MSE.
+
+**Dataset columns:** `price`, `bedrooms`, `bathrooms`, `sqft_living`, `sqft_lot`, `floors`, `waterfront`, `view`, `condition`, `sqft_above`, `sqft_basement`, `yr_built`, `yr_renovated`, `city`, `statezip`.
+
+```python
+data.drop(columns=["street", "country"], inplace=True)
+data = pd.get_dummies(data, columns=["city", "statezip"], drop_first=True)
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+model = LinearRegression().fit(X_train, y_train)
+```
+
+---
+
+### 6. Student Marks Prediction (`Projects/StudentMarksPrediction/`)
+
+A beginner-level regression project that models the relationship between study hours and exam marks on a small custom dataset. A Linear Regression model is trained, a prediction is made for 8 hours of study, and the data along with the regression line is plotted using matplotlib.
+
+**Key concepts:** Linear Regression, prediction on unseen input, scatter plot with regression line.
+
+```python
+model = LinearRegression()
+model.fit(X, y)
+prediction = model.predict([[8]])
+print("Marks of 8 hours study:", prediction[0])
+```
 
 ---
 
@@ -82,13 +122,13 @@ A simple regression project that models the relationship between study hours and
 | Library | Purpose |
 |---------|---------|
 | Python 3.x | Core language |
-| scikit-learn | ML algorithms and preprocessing |
+| scikit-learn | ML algorithms, preprocessing, evaluation |
 | pandas | Data loading and manipulation |
 | matplotlib | Visualization and plotting |
 
 ---
 
-## Installation
+## Installation and Setup
 
 ```bash
 git clone https://github.com/yourusername/MechineLearning.git
@@ -96,11 +136,23 @@ cd MechineLearning
 pip install scikit-learn pandas matplotlib
 ```
 
-Run any script directly:
+Run any concept script:
 
 ```bash
 python K-MeansClustering.py
-python Projects/HousePricePrediction/HousePricePrediction.py
+python KFold.py
+python LogisticRegression.py
+python OneHotEncoding.py
+```
+
+Run a project:
+
+```bash
+cd Projects/HousePricePrediction
+python HousePricePrediction.py
+
+cd Projects/StudentMarksPrediction
+python StudentMarksPrediction.py
 ```
 
 ---
